@@ -1,4 +1,4 @@
-package lu.crx.financing.entities;
+package lu.crx.financing.dao;
 
 import java.io.Serializable;
 import jakarta.persistence.Basic;
@@ -33,5 +33,4 @@ public class Debtor implements Serializable {
 
     @Basic(optional = false)
     private String name;
-
 }

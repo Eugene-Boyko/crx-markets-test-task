@@ -1,21 +1,22 @@
 package lu.crx.financing.services;
 
-import java.time.LocalDate;
+import org.springframework.stereotype.Service;
+
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
-import lu.crx.financing.entities.Creditor;
-import lu.crx.financing.entities.Debtor;
-import lu.crx.financing.entities.Invoice;
-import lu.crx.financing.entities.Purchaser;
-import lu.crx.financing.entities.PurchaserFinancingSettings;
-import org.springframework.stereotype.Service;
+import lu.crx.financing.dao.Creditor;
+import lu.crx.financing.dao.Debtor;
+import lu.crx.financing.dao.Invoice;
+import lu.crx.financing.dao.Purchaser;
+import lu.crx.financing.dao.PurchaserFinancingSettings;
 
 @Slf4j
 @Service
 public class SeedingService {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     private Creditor creditor1;
     private Creditor creditor2;
@@ -24,10 +25,6 @@ public class SeedingService {
     private Debtor debtor1;
     private Debtor debtor2;
     private Debtor debtor3;
-
-    private Purchaser purchaser1;
-    private Purchaser purchaser2;
-    private Purchaser purchaser3;
 
     public SeedingService(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -73,59 +70,80 @@ public class SeedingService {
         entityManager.persist(debtor3);
 
         // purchasers
-        purchaser1 = Purchaser.builder()
+        Purchaser purchaser1 = Purchaser.builder()
                 .name("RichBank")
                 .minimumFinancingTermInDays(10)
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor1)
-                        .annualRateInBps(50)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor2)
-                        .annualRateInBps(60)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor3)
-                        .annualRateInBps(30)
-                        .build())
                 .build();
         entityManager.persist(purchaser1);
+        // purchaserFinancingSetting 1
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .annualRateInBps(50)
+                        .purchaser(purchaser1)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .annualRateInBps(60)
+                        .purchaser(purchaser1)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .annualRateInBps(30)
+                        .purchaser(purchaser1)
+                        .build());
 
-        purchaser2 = Purchaser.builder()
+        Purchaser purchaser2 = Purchaser.builder()
                 .name("FatBank")
                 .minimumFinancingTermInDays(12)
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor1)
-                        .annualRateInBps(40)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor2)
-                        .annualRateInBps(80)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor3)
-                        .annualRateInBps(25)
-                        .build())
                 .build();
         entityManager.persist(purchaser2);
+        // purchaserFinancingSetting 2
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .annualRateInBps(40)
+                        .purchaser(purchaser2)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .annualRateInBps(80)
+                        .purchaser(purchaser2)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .annualRateInBps(25)
+                        .purchaser(purchaser2)
+                        .build());
 
-        purchaser3 = Purchaser.builder()
+        Purchaser purchaser3 = Purchaser.builder()
                 .name("MegaBank")
                 .minimumFinancingTermInDays(8)
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor1)
-                        .annualRateInBps(30)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor2)
-                        .annualRateInBps(50)
-                        .build())
-                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
-                        .creditor(creditor3)
-                        .annualRateInBps(45)
-                        .build())
                 .build();
         entityManager.persist(purchaser3);
+        // purchaserFinancingSetting 3
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .annualRateInBps(30)
+                        .purchaser(purchaser3)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .annualRateInBps(50)
+                        .purchaser(purchaser3)
+                        .build());
+        entityManager.persist(
+                PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .annualRateInBps(45)
+                        .purchaser(purchaser3)
+                        .build());
     }
 
     @Transactional

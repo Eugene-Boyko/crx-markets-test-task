@@ -1,26 +1,21 @@
-package lu.crx.financing.entities;
+package lu.crx.financing.dao;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.ToString;
 
 /**
- * Purchaser is an entity (usually a bank) that wants to purchase the invoices. I.e. it issues a loan
- * to the creditor for the term and the value of the invoice, according to the rate set up by this purchaser.
+ * Purchaser is an entity (usually a bank) that wants to purchase the invoices. I.e. it issues a loan to the creditor
+ * for the term and the value of the invoice, according to the rate set up by this purchaser.
  */
 @Entity
 @Getter
@@ -43,12 +38,4 @@ public class Purchaser implements Serializable {
      */
     @Basic(optional = false)
     private int minimumFinancingTermInDays;
-
-    /**
-     * The per-creditor settings for financing.
-     */
-    @Singular
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private Set<PurchaserFinancingSettings> purchaserFinancingSettings = new HashSet<>();
-
 }

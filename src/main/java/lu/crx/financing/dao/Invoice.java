@@ -1,4 +1,4 @@
-package lu.crx.financing.entities;
+package lu.crx.financing.dao;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -55,4 +55,10 @@ public class Invoice implements Serializable {
      */
     @Basic(optional = false)
     private long valueInCents;
+
+    /**
+     * The value represents whether this invoice was processed or not
+     */
+    @Basic(optional = false)
+    private boolean processed;
 }

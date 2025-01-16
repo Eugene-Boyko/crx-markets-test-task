@@ -1,13 +1,11 @@
-package lu.crx.financing.dao;
+package lu.crx.financing.persistence.entity;
 
-import jakarta.persistence.FetchType;
-import java.io.Serializable;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +14,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Financing settings set by the purchaser for a specific creditor.
+ * Purchaser is an entity (usually a bank) that wants to purchase the invoices. I.e. it issues a loan to the creditor
+ * for the term and the value of the invoice, according to the rate set up by this purchaser.
  */
 @Entity
 @Getter
@@ -25,21 +24,18 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaserFinancingSettings implements Serializable {
+public class Purchaser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Creditor creditor;
+    @Basic(optional = false)
+    private String name;
 
     /**
-     * The annual financing rate set by the purchaser for this creditor.
+     * The minimum financing term (duration between the financing date and the maturity date of the invoice).
      */
     @Basic(optional = false)
-    private int annualRateInBps;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Purchaser purchaser;
+    private int minimumFinancingTermInDays;
 }

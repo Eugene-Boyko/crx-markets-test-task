@@ -1,13 +1,13 @@
-package lu.crx.financing.dao;
+package lu.crx.financing.persistence.entity;
 
-import java.io.Serializable;
-import java.time.LocalDate;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import java.io.Serializable;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,8 +44,8 @@ public class Invoice implements Serializable {
     private Debtor debtor;
 
     /**
-     * Maturity date is the date on which the {@link #debtor} is to pay for the invoice.
-     * In case the invoice was financed, the money will be paid in full on this date to the purchaser of the invoice.
+     * Maturity date is the date on which the {@link #debtor} is to pay for the invoice. In case the invoice was
+     * financed, the money will be paid in full on this date to the purchaser of the invoice.
      */
     @Basic(optional = false)
     private LocalDate maturityDate;

@@ -1,3 +1,8 @@
+## How To Run:
+1. please enable checkbox like in the screen 
+
+![maven setting](MavenSetup.PNG)
+
 ## What you get
 
 The application in this repository: 

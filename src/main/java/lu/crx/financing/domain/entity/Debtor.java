@@ -1,4 +1,4 @@
-package lu.crx.financing.domain;
+package lu.crx.financing.domain.entity;
 
 /**
  * A debtor is an entity that purchased some goods from the {@link Creditor}, received an {@link Invoice} and is obliged

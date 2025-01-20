@@ -5,6 +5,9 @@
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
     </root>
-    <logger name="org.springframework.web" level="trace"/>
-    <logger name="lu.crx.financing" level="info"/>
+    <logger name="org.springframework.web" level="TRACE"/>
+    <logger name="lu.crx.financing" level="INFO"/>
+
+    <logger name="io.ebean.SQL" level="INFO"/>
+    <logger name="io.ebean.TXN" level="INFO"/>
 </configuration>

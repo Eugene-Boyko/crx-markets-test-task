@@ -1,7 +1,116 @@
 ## How To Run:
-1. please enable checkbox like in the screen 
+
+    1. IDE: run Application class as Spring Boot application
+    2. Maven: mvn spring-boot:run
+    3. jar: java -jar target/assignment-financing-*.jar (may not work in Windows cmd)
+
+
+**Warning**: If you are using an Intellij Idea for spring boot application run then please enable checkbox like in the
+screen
+(it is necessary for the ebean entities enhancement and query beans generation)
 
 ![maven setting](MavenSetup.PNG)
+
+## Possible usages of application
+
+1. If the application has just been launched without any changes then db was seeded by flyway migrations with the values
+   that were
+   present in the
+   original
+   source code. SeedingService - removed now. Please check the following
+   files: [V2__seeding_master_data_script.sql](src/main/resources/db/migration/V2__seeding_master_data_script.sql)
+   and [R__seeding_invoices_script.sql](src/main/resources/db/migration/R__seeding_invoices_script.sql). And in this case,
+   the correctness of the business logic can be checked using already known values. The processing endpoint:
+    ```shell
+    POST http://localhost:8080/yb-task/v1/invoices
+    Content-Type: application/json
+    {
+      "processingDate": "2025-01-20",
+      "invoicesToProcessAmount": 10000
+    }
+    ```
+   may be called to starts processing of the existing 15 not processed invoices.
+2. The application may be switched to the performance testing mode by calling the seeding endpoint.
+    ```shell
+    POST http://localhost:8080/yb-test/v1/test/seeding
+    ```
+   It may take around 2 or 3 min. In this case existing records in the db would be truncated and around 500K testing records would be generated and
+   added to the database. After seeding the process endpoint would process the amount of invoices meantioned in
+   the `invoicesToProcessAmount` field. `batchSize` and `threads` amount are configured in
+   the [application.yaml](src/main/resources/application.yaml)
+
+## Database credentials:
+
+```shell
+user: sa 
+password: pass 
+```
+
+H2 console is available here [h2-console](http://localhost:8080/h2-console)
+
+## Swagger UI
+http://localhost:8080/swagger-ui/index.html
+
+High overview of the results may be obtained by the following sql query:
+
+    select * from financing_results fr join invoice inv on fr.invoice_id = inv.id join purchaser_financing_settings pfs on fr.purchaser_financing_settings_id = pfs.id join creditor cr on inv.creditor_id = cr.id
+
+## Performance testing results
+
+Laptop configuration: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz 32.0 GB (31.7 GB usable) \
+Data base stay: \
+~500000 dummy processed invoices (generated with processed = true and `without financing results`), \
+~10000 not processed invoices, \
+~100 Creditors, \
+~100 Debtors, \
+~100 Purchasers, \
+~10000 Purchaser settings
+
+### 1. Seeding database time by calling
+
+```shell
+POST http://localhost:8080/yb-test/v1/test/seeding
+```
+
+took `~ 2 min` . Request fails with timeout, but the seeding process continues on background. Logs will tell you when the process is finished
+
+#### Application logs of seeding:
+
+    2025-01-20T04:37:21.658+01:00  INFO 1240 --- [nio-8080-exec-1] l.c.f.c.SeedingTestDataController        : SeedingTestDataController: seedDb requested, 2025-01-20T04:37:21.658007600
+    2025-01-20T04:39:17.187+01:00  INFO 1240 --- [nio-8080-exec-1] l.c.f.c.SeedingTestDataController        : SeedingTestDataController: seedDb finished, 2025-01-20T04:39:17.187567900
+
+
+### 2. Processing 10000 invoices by calling:
+```shell
+POST http://localhost:8080/yb-task/v1/invoices
+Content-Type: application/json
+
+{
+  "processingDate": "2025-01-20",
+  "invoicesToProcessAmount": 10000
+}
+```
+
+took `~ 5743ms (5 s 743 ms)`
+#### The application logs of the performance testing
+
+    2025-01-20T04:43:25.252+01:00 TRACE 1240 --- [nio-8080-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [ProcessInvoiceRequest[processingDate=2025-01-20, invoicesToProcessAmount=10000]]
+    2025-01-20T04:43:25.324+01:00 TRACE 1240 --- [nio-8080-exec-5] o.s.web.method.HandlerMethod             : Arguments: [ProcessInvoiceRequest[processingDate=2025-01-20, invoicesToProcessAmount=10000]]
+    2025-01-20T04:43:25.324+01:00  INFO 1240 --- [nio-8080-exec-5] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processInvoices started at 2025-01-20T04:43:25.324814500
+    2025-01-20T04:43:29.770+01:00  INFO 1240 --- [pool-2-thread-6] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 1000 and 2000 by thread pool-2-thread-6 at 2025-01-20T04:43:29.770074700, processing invoices: 1000
+    2025-01-20T04:43:29.770+01:00  INFO 1240 --- [pool-2-thread-2] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 2000 and 3000 by thread pool-2-thread-2 at 2025-01-20T04:43:29.770074700, processing invoices: 1000
+    2025-01-20T04:43:29.770+01:00  INFO 1240 --- [pool-2-thread-1] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 0 and 1000 by thread pool-2-thread-1 at 2025-01-20T04:43:29.770524700, processing invoices: 1000
+    2025-01-20T04:43:29.771+01:00  INFO 1240 --- [pool-2-thread-5] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 8000 and 9000 by thread pool-2-thread-5 at 2025-01-20T04:43:29.771539200, processing invoices: 1000
+    2025-01-20T04:43:29.771+01:00  INFO 1240 --- [pool-2-thread-9] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 7000 and 8000 by thread pool-2-thread-9 at 2025-01-20T04:43:29.771539200, processing invoices: 1000
+    2025-01-20T04:43:29.772+01:00  INFO 1240 --- [ool-2-thread-10] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 9000 and 10000 by thread pool-2-thread-10 at 2025-01-20T04:43:29.772817600, processing invoices: 1000
+    2025-01-20T04:43:29.772+01:00  INFO 1240 --- [pool-2-thread-8] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 5000 and 6000 by thread pool-2-thread-8 at 2025-01-20T04:43:29.772817600, processing invoices: 1000
+    2025-01-20T04:43:29.776+01:00  INFO 1240 --- [pool-2-thread-4] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 6000 and 7000 by thread pool-2-thread-4 at 2025-01-20T04:43:29.776331500, processing invoices: 1000
+    2025-01-20T04:43:29.777+01:00  INFO 1240 --- [pool-2-thread-3] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 4000 and 5000 by thread pool-2-thread-3 at 2025-01-20T04:43:29.777332, processing invoices: 1000
+    2025-01-20T04:43:29.777+01:00  INFO 1240 --- [pool-2-thread-7] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processing batch 3000 and 4000 by thread pool-2-thread-7 at 2025-01-20T04:43:29.777332, processing invoices: 1000
+    2025-01-20T04:43:30.960+01:00  INFO 1240 --- [nio-8080-exec-5] l.c.f.services.InvoiceProcessService     : InvoiceProcessService: processInvoices finished at 2025-01-20T04:43:30.960604900
+
+
+### If something goes wrong, just remove the test.mv.db file from the root directory and restart application
 
 ## What you get
 

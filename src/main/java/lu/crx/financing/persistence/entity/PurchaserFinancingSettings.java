@@ -42,4 +42,11 @@ public class PurchaserFinancingSettings implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Purchaser purchaser;
+
+    // intentional denormalization, allows to avoid extra join with the Purchaser
+    /**
+     * The minimum financing term (duration between the financing date and the maturity date of the invoice).
+     */
+    @Basic(optional = false)
+    private int minimumFinancingTermInDays;
 }

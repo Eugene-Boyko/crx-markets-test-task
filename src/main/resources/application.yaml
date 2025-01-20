@@ -14,3 +14,8 @@ datasource:
     url: jdbc:h2:./test;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password: pass
+
+financing:
+  processing:
+    batchSize: 1000
+    threads: 10

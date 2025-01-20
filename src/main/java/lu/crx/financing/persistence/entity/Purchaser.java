@@ -32,10 +32,4 @@ public class Purchaser implements Serializable {
 
     @Basic(optional = false)
     private String name;
-
-    /**
-     * The minimum financing term (duration between the financing date and the maturity date of the invoice).
-     */
-    @Basic(optional = false)
-    private int minimumFinancingTermInDays;
 }

@@ -3,7 +3,7 @@ package lu.crx.financing.services.mapper;
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 import java.util.List;
-import lu.crx.financing.domain.Invoice;
+import lu.crx.financing.domain.entity.Invoice;
 import lu.crx.financing.dto.InvoiceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

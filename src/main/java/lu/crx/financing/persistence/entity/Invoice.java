@@ -1,7 +1,9 @@
 package lu.crx.financing.persistence.entity;
 
+import io.ebean.Model;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +27,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Invoice implements Serializable {
+public class Invoice extends Model implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,7 +42,7 @@ public class Invoice implements Serializable {
     /**
      * Debtor is the entity obliged to pay according to the invoice.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Debtor debtor;
 
     /**

@@ -1,4 +1,4 @@
-package lu.crx.financing.domain;
+package lu.crx.financing.domain.entity;
 
 /**
  * A creditor is a company that shipped some goods to the {@link Debtor}, issued an {@link Invoice} for the shipment and
